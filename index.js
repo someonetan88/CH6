@@ -30,42 +30,29 @@ app.post("/uploads/image", upload.single("image"), async (req, res) => {
   }
 
   try {
-    // Initialize ImageKit client
+    // send file to ImageKit.io
     const imageKitClient = new imageKit({
       publicKey: process.env.IMAGEKIT_PUBLICKEY,
       privateKey: process.env.IMAGEKIT_PRIVATEKEY,
       urlEndpoint: process.env.IMAGEKIT_URLENDPOINT,
     });
 
-    // Upload image to ImageKit.io and apply transformations
     const uploadResponse = await imageKitClient.upload({
-      file: fs.createReadStream(file.path), // Send file stream
+      file: fs.createReadStream(file.path), // send file stream
       fileName: file.originalname,
       folder: "/uploads",
-      useUniqueFileName: true, // Use unique filename
-      responseFields: ["url", "thumbnailUrl"], // Get URL and thumbnail URL
-      transformation: [
-        {
-          width: 800, // Resize image width to 800px
-          height: 600, // Resize image height to 600px
-          quality: 80, // Set image quality to 80%
-          cropMode: "limit", // Limit image cropping
-        },
-        {
-          overlayOpacity: 50, // Set watermark opacity to 50%
-        },
-      ],
+      useUniqueFileName: false,
+      tags: ["optimized"],
     });
 
-    const { url, thumbnailUrl } = uploadResponse;
+    const { url } = uploadResponse;
 
-    // Save image data to database using Prisma
+    // save data image to database using Prisma
     const savedImage = await prismaClient.images.create({
       data: {
         title,
         description,
         url,
-        thumbnailUrl,
       },
     });
 
@@ -73,9 +60,6 @@ app.post("/uploads/image", upload.single("image"), async (req, res) => {
   } catch (error) {
     console.error("Error uploading image:", error);
     res.status(500).json({ error: "Internal server error" });
-  } finally {
-    // Delete temporary uploaded file
-    fs.unlinkSync(file.path);
   }
 });
 
