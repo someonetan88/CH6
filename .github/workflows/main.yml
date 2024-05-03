@@ -1,0 +1,32 @@
+name: Deploy via SSH
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Git update source code from branch (main)
+            cd /home/someonetan853/upload-image && git pull
+
+            # Create or update .env file with secrets
+            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PUBLICKEY=\"${{ secrets.IMAGEKIT_PUBLICKEY }}\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PRIVATEKEY=\"${{ secrets.IMAGEKIT_PRIVATEKEY }}\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_URLENDPOINT=\"${{ secrets.IMAGEKIT_URLENDPOINT }}\"" >> /home/someonetan853/upload-image/.env
+
+            # Show .env file for verification
+            cat /home/someonetan853/upload-image/.env
+
+            # Restart PM2 process
+            pm2 restart upload-image
