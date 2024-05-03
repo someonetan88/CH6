@@ -19,11 +19,14 @@ jobs:
             # Git update source code from branch (main)
             cd /home/someonetan853/upload-image && git pull
 
-            # Create file .env
-            echo "DATABASE_URL=\"postgresql://postgres:satu_123@localhost:5432/upload_images?schema=public\"" > /home/someonetan853/upload-image/.env
-            echo "IMAGEKIT_PUBLICKEY=\"public_mav4QbRFzM+38dQwTrQuyqieXmo=\"" >> /home/someonetan853/upload-image/.env
-            echo "IMAGEKIT_PRIVATEKEY=\"private_Gcj8ZVcve8YPy+w1oDo3doc137U=\"" >> /home/someonetan853/upload-image/.env
-            echo "IMAGEKIT_URLENDPOINT=\"https://ik.imagekit.io/someonetan853/\"" >> /home/someonetan853/upload-image/.env
+            # Create or update .env file with secrets
+            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PUBLICKEY=\"${{ secrets.IMAGEKIT_PUBLICKEY }}\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PRIVATEKEY=\"${{ secrets.IMAGEKIT_PRIVATEKEY }}\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_URLENDPOINT=\"${{ secrets.IMAGEKIT_URLENDPOINT }}\"" >> /home/someonetan853/upload-image/.env
 
-            # Show file .env for verification
+            # Show .env file for verification
             cat /home/someonetan853/upload-image/.env
+
+            # Restart PM2 process
+            pm2 restart upload-image
