@@ -1,0 +1,29 @@
+name: Deploy via SSH
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Git update source code from branch (main)
+            cd /home/someonetan853/upload-image && git pull
+
+            # Create file .env
+            echo "DATABASE_URL=\"postgresql://postgres:satu_123@localhost:5432/upload_images?schema=public\"" > /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PUBLICKEY=\"public_mav4QbRFzM+38dQwTrQuyqieXmo=\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_PRIVATEKEY=\"private_Gcj8ZVcve8YPy+w1oDo3doc137U=\"" >> /home/someonetan853/upload-image/.env
+            echo "IMAGEKIT_URLENDPOINT=\"https://ik.imagekit.io/someonetan853/\"" >> /home/someonetan853/upload-image/.env
+
+            # Show file .env for verification
+            cat /home/someonetan853/upload-image/.env
