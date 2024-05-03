@@ -8,6 +8,7 @@ const imageKit = require("imagekit");
 const fs = require("fs");
 const { PrismaClient } = require("@prisma/client");
 const prismaClient = new PrismaClient();
+require("dotenv").config();
 
 app.use(express.json()); // Middleware for parsing application/json
 app.use("/uploads", express.static("uploads"));
