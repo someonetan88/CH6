@@ -80,7 +80,7 @@ app.post("/uploads/image", upload.single("image"), async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on port ${port}-${process.env.IMAGEKIT_URLENDPOINT}`);
 });
 
 module.exports = app;
