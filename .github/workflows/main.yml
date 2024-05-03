@@ -19,7 +19,7 @@ jobs:
             # Git update source code from branch (main)
             cd /home/someonetan853/upload-image && git pull
 
-            # Create or update .env file with secrets 
+            # Create or update .env file with secrets key
             echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > /home/someonetan853/upload-image/.env
             echo "IMAGEKIT_PUBLICKEY=\"${{ secrets.IMAGEKIT_PUBLICKEY }}\"" >> /home/someonetan853/upload-image/.env
             echo "IMAGEKIT_PRIVATEKEY=\"${{ secrets.IMAGEKIT_PRIVATEKEY }}\"" >> /home/someonetan853/upload-image/.env
